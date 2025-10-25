@@ -25,9 +25,9 @@ giúp người dùng tính **phí qua đêm (Swap Fee)** trong giao dịch Forex
 ## 🧠 Kiến trúc & Kỹ thuật sử dụng
 | Thành phần | Công nghệ |
 |-------------|------------|
-| **Backend** | Laravel 10 (PHP 8.2+) |
+| **Backend** | Laravel 10 (PHP 8.1.31) |
 | **Frontend** | Blade + Bootstrap 5 |
-| **Database** | MySQL |
+| **Database** | MySQL (version 9.1.0)|
 | **Pattern** | Service + Repository |
 | **API** | Laravel API Routes (`routes/api.php`) |
 | **Validation** | Laravel Validator |
