@@ -62,6 +62,9 @@ resources/
 │       ├── history.balde.php # hiển thị lịch sử
 │       ├── index.balde.php # thêm
 │       ├── statistics.balde.php # thống kê 
+│       ├── import.balde.php # import file và render data
+│   ├── master.blade.php # master layout
+
 
 routes/
 ├── web.php # Route cho web
