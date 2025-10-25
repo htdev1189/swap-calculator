@@ -36,6 +36,11 @@
                         <span class="micon bi bi-house"></span>
                         <span class="mtext">Statistics</span>
                     </a>
+                    <a href="{{ route('admin.swap.import') }}"
+                        class="dropdown-toggle no-arrow {{ request()->routeIs('admin.swap.import') ? 'active' : '' }}">
+                        <span class="micon bi bi-house"></span>
+                        <span class="mtext">Data Import</span>
+                    </a>
                 </li>
             </ul>
         </div>

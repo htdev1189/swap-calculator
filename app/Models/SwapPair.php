@@ -5,19 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SwapCalculation extends Model
+class SwapPair extends Model
 {
     use HasFactory;
-
-    protected $table = 'swap_calculations';
-    protected $fillable = ['pair', 'lot_size', 'type', 'swap_rate', 'days', 'total_swap'];
+    protected $fillable = ['pair', 'swap_long', 'swap_short'];
     protected $casts = [
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
-
-    // mục đích ->created_at và ->updated_at sẽ luôn đúng định dạng theo cấu hình
-    // vấn đề xảy ra sau khi render lại table history ở file index.blade.php thì lỗi ngày tháng
     protected function serializeDate(\DateTimeInterface $date)
     {
         return $date->timezone('Asia/Ho_Chi_Minh')->format('Y-m-d H:i:s');

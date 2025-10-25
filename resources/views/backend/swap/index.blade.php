@@ -34,17 +34,27 @@
     <div class="row g-2 mb-3">
         <div class="col-md-3">
             <label>Currency Pair</label>
-            <select name="pair" class="custom-select form-control">
-                @foreach ($Currencies as $Currency)
-                <option value="{{ $Currency }}" {{ old('pair') == $Currency ? 'selected' : '' }}>
-                    {{ $Currency }}
-                </option>
-                @endforeach
+            <select name="pair" class="custom-select form-control" id="pair">
+                <option value="">Select Pair</option>
+                @if (count($Currencies) > 0)
+                    @foreach ($Currencies as $Currency)
+                    <option value="{{ $Currency->pair }}" {{ old('pair') == $Currency->pair ? 'selected' : '' }}>
+                        {{ $Currency->pair }}
+                    </option>
+                    @endforeach
+                @else
+                    @foreach ($dataTest as $Currency)
+                    <option value="{{ $Currency }}" {{ old('pair') == $Currency ? 'selected' : '' }}>
+                        {{ $Currency }}
+                    </option>
+                    @endforeach
+                @endif
+
             </select>
         </div>
-        <div class="col-md-2"><label>Lot Size</label><input name="lot_size" type="number" step="0.01" class="form-control" value="{{ old('lot_size') }}"></div>
-        <div class="col-md-2"><label>Swap Long</label><input name="swap_long" type="number" step="0.01" class="form-control" value="{{ old('swap_long') }}"></div>
-        <div class="col-md-2"><label>Swap Short</label><input name="swap_short" type="number" step="0.01" class="form-control" value="{{ old('swap_short') }}"></div>
+        <div class="col-md-2"><label>Lot Size</label><input name="lot_size" type="number" step="0.1" class="form-control" value="{{ old('lot_size') }}"></div>
+        <div class="col-md-2"><label>Swap Long</label><input id="swap_long" name="swap_long" type="number" step="0.1" class="form-control" value="{{ old('swap_long') }}"></div>
+        <div class="col-md-2"><label>Swap Short</label><input id="swap_short" name="swap_short" type="number" step="0.1" class="form-control" value="{{ old('swap_short') }}"></div>
         <div class="col-md-1"><label>Days</label><input name="holding_days" type="number" class="form-control" value="{{ old('holding_days') }}"></div>
         <div class="col-md-2"><label>Type</label>
             <select name="position_type" class="custom-select form-control">
@@ -61,9 +71,9 @@
 
 
 <!-- khung hien thi 10 dong gan nhat -->
- 
+
 <div id="history-result" class="mt-4">
-    @if(count($histories) > 0)
+    @if( ! $histories->isEmpty() )
     <table class="table table-bordered mt-3">
         <thead>
             <tr>
@@ -105,6 +115,9 @@
     // Hàm render bảng từ dữ liệu trả về
     function renderHistoryTable(data) {
         var records = data.recentRecords;
+
+        console.log(records);
+        
 
         var html = `
         <table class="table table-bordered mt-3">
@@ -158,7 +171,7 @@
         var positionType = data.position_type;
         var swapRate = data.swap_rate;
         var days = data.holding_days;
-        
+
 
         // Tạo HTML hiển thị kết quả
         var html = '<div class="alert alert-' + notification['type'] + '">';
@@ -231,6 +244,35 @@
             error: function(xhr) {
                 toastr.error('Có lỗi xảy ra, vui lòng thử lại!');
                 console.log(xhr.responseText);
+            }
+        });
+    });
+
+
+    // auto complete swap 
+    $('#pair').on('change', function() {
+        var pair = $(this).val();
+
+        if (!pair) return;
+
+        var url = "{{ route('admin.swap.pairs.get', ':pair') }}";
+        url = url.replace(':pair', pair);
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            dataType: 'json',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                $('#swap_long').val(response.swap_long ?? '');
+                $('#swap_short').val(response.swap_short ?? '');
+            },
+            error: function() {
+                log('Error fetching swap rates');
+                $('#swap_long').val('');
+                $('#swap_short').val('');
             }
         });
     });

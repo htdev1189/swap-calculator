@@ -42,16 +42,19 @@
                                 {{ $item['pair'] }}
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
             @empty
-                empty data
+            empty data
             @endforelse
         </div>
-
-        <canvas id="myChart"></canvas>
+        <div class="row">
+            <div class="col-md-6">
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
     </div>
 </div>
 

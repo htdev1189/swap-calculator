@@ -1,7 +1,5 @@
 @extends('backend.master')
 
-@section('title', 'Create Category')
-
 @section('stylesheets')
 <link
     rel="stylesheet"
@@ -35,19 +33,7 @@
 <div class="card-box mb-30">
     <div class="pt-20 pb-20">
         <table id="historyTable" class="table stripe hover nowrap">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Currency Pair</th>
-                    <th>Lot Size</th>
-                    <th>Position Type</th>
-                    <th>Swap Rate</th>
-                    <th>Days</th>
-                    <th>Total Swap</th>
-                    <th>Created At</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
+
         </table>
     </div>
 </div>
@@ -63,15 +49,15 @@
 
 <!-- Toastr notifications -->
 @if (session('success'))
-    <script>
-        toastr.success("{{ session('success') }}");
-    </script>
+<script>
+    toastr.success("{{ session('success') }}");
+</script>
 @endif
 
 @if (session('error'))
-    <script>
-        toastr.error("{{ session('error') }}");
-    </script>
+<script>
+    toastr.error("{{ session('error') }}");
+</script>
 @endif
 
 
@@ -79,6 +65,9 @@
 
 <script>
     $('#historyTable').DataTable({
+        order: [
+            [7, "desc"] // sap xep theo created_at thu tu desc
+        ],
         pageLength: 5,
         processing: true,
         serverSide: true,

@@ -8,65 +8,87 @@ use Illuminate\Support\Facades\DB;
 
 class SwapRepository
 {
+    /**
+     * SwapCalculation model
+     */
     protected $model;
+
     public function __construct()
     {
         $this->model = new SwapCalculation();
     }
+
+    /**
+     * Lưu swap calculation vào DB
+     *
+     * @param array $data
+     * @return SwapCalculation
+     */
     public function store(array $data): SwapCalculation
     {
         return $this->model::create($data);
     }
 
+    /**
+     * Lấy các swap calculation gần nhất
+     *
+     * @param int $limit
+     */
     public function getRecent(int $limit = 10)
     {
-        // return $this->model::orderByDesc('created_at')->take($limit)->get()->toArray(); //array
+        $records = $this->model::orderByDesc('created_at')
+            ->take($limit)
+            ->get();
+        return $records;
 
-        // return $this->model::orderByDesc('created_at')->take($limit)->get(); //colection
-
-        // chuyen doi ve mang object
-        $records = $this->model::orderByDesc('created_at')->take($limit)->get();
-        $arrayOfObjects = $records->map(function ($item) {
-            return (object) $item->toArray(); // mỗi record thành object
-        })->all();
-        return $arrayOfObjects;
+        // Chuyển mỗi record thành object (không phải collection)
+        // return $records->map(fn($item) => (object)$item->toArray())->all();
     }
 
+    /**
+     * Tìm swap theo ID
+     *
+     * @param int $id
+     * @return SwapCalculation|null
+     */
     public function find($id)
     {
         return $this->model->find($id);
     }
 
-
+    /**
+     * Xóa swap theo ID
+     *
+     * @param int $id
+     * @return bool
+     */
     public function delete($id): bool
     {
         $swap = $this->find($id);
         return $swap ? $swap->delete() : false;
     }
 
+    /**
+     * Lấy tất cả swap calculation
+     *
+     * @return \Illuminate\Support\Collection
+     */
     public function getAll()
     {
         return $this->model->orderBy('created_at', 'desc')->get();
     }
 
-    // thong ke
     /**
-     * Lấy tổng phí swap theo từng cặp tiền trong 7 ngày gần nhất
-     */
-
-    /**
-     * SELECT 
-            pair, 
-            SUM(total_swap) AS total_swap
-        FROM 
-            swap_calculations
-        WHERE 
-            created_at >= NOW() - INTERVAL 7 DAY
-        GROUP BY 
-            pair
-        ORDER BY 
-            pair ASC;
-
+     * Thống kê tổng phí swap theo từng cặp tiền trong 7 ngày gần nhất
+     *
+     * SQL tương đương:
+     * SELECT pair, SUM(total_swap) AS total_swap
+     * FROM swap_calculations
+     * WHERE created_at >= NOW() - INTERVAL 7 DAY
+     * GROUP BY pair
+     * ORDER BY pair ASC;
+     *
+     * @return \Illuminate\Support\Collection
      */
     public function getTotalSwapLast7Days()
     {
@@ -76,6 +98,4 @@ class SwapRepository
             ->orderBy('pair')
             ->get();
     }
-
-    
 }

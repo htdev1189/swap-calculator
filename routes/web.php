@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\SwapController;
 use App\Http\Controllers\SwapApiController;
+use App\Http\Controllers\SwapImportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,9 +28,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/history', [SwapController::class, 'history'])->name('swap.history.datatable');
     Route::get('/historyData', [SwapController::class, 'getData'])->name('swap.history.data');
-
+    
     // thongke
     Route::get('/statistics', [SwapController::class, 'statistics'])->name('swap.history.statistics');
+    
+    // swap import
+    Route::get('/swap/import', [SwapImportController::class, 'index'])->name('swap.import');
+    Route::get('/swap/pairs', [SwapImportController::class, 'getData'])->name('swap.pairs.data');
+    Route::post('/swap/import', [SwapImportController::class, 'import'])->name('swap.pairs.import');
+    Route::get('/swap-pair/{pair}', [SwapImportController::class, 'getPair'])->name('swap.pairs.get');
+
 });
 
 

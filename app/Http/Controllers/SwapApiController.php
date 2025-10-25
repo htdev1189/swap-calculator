@@ -7,10 +7,20 @@ use Illuminate\Http\Request;
 
 class SwapApiController extends Controller
 {
+    /**
+     * Inject SwapService
+     */
     public function __construct(protected SwapService $service) {}
 
-    public function api_calculate(Request $request){
-        // Validation
+    /**
+     * API tính toán swap
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function api_calculate(Request $request)
+    {
+        // Validation input
         $validator = \Validator::make($request->all(), [
             'pair' => ['required', 'string'],
             'lot_size' => ['required', 'numeric', 'gt:0'],
@@ -34,14 +44,16 @@ class SwapApiController extends Controller
             'position_type.in' => 'Loại vị thế chỉ được phép là Long hoặc Short.',
         ]);
 
+        // Nếu validation lỗi, trả về JSON
         if ($validator->fails()) {
             return response()->json([
-                'status' => 0,
+                'success' => false,
                 'msg' => 'Có lỗi xảy ra!',
                 'errors' => $validator->errors()
             ]);
         }
 
+        // Tính toán swap
         $swap = $this->service->calculate($validator->validated());
 
         return response()->json([
@@ -50,6 +62,11 @@ class SwapApiController extends Controller
         ]);
     }
 
+    /**
+     * API lấy lịch sử swap
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function api_history()
     {
         $history = $this->service->getHistory();
@@ -59,5 +76,4 @@ class SwapApiController extends Controller
             'data' => $history
         ]);
     }
-
 }

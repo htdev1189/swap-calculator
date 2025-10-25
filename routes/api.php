@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SwapController;
+use App\Http\Controllers\SwapApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +20,6 @@ use App\Http\Controllers\SwapController;
 // });
 
 Route::prefix('swap')->group(function () {
-    Route::post('calculate', [SwapController::class, 'api_calculate'])->name('api.swap.calculate');
-    Route::get('history', [SwapController::class, 'api_history'])->name('api.swap.history');
+    Route::post('calculate', [SwapApiController::class, 'api_calculate'])->name('api.swap.calculate');
+    Route::get('history', [SwapApiController::class, 'api_history'])->name('api.swap.history');
 });
