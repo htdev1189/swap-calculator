@@ -21,6 +21,7 @@ class SwapController extends Controller
      */
     public function index()
     {
+        // dd(auth()->user()->getRoleNames());
         return view('backend.home', [
             'pageTitle' => 'Admin page'
         ]);

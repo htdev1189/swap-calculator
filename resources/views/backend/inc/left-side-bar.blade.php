@@ -41,6 +41,11 @@
                         <span class="micon bi bi-house"></span>
                         <span class="mtext">Data Import</span>
                     </a>
+                    <a href="{{ route('admin.roles.index') }}"
+                        class="dropdown-toggle no-arrow {{ request()->routeIs('admin.roles.index') ? 'active' : '' }}">
+                        <span class="micon bi bi-house"></span>
+                        <span class="mtext">Roles</span>
+                    </a>
                 </li>
             </ul>
         </div>
