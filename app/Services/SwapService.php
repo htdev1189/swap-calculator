@@ -129,9 +129,8 @@ class SwapService
     /**
      * Lấy tất cả lịch sử swap
      *
-     * @return array
      */
-    public function getAllHistory(): array
+    public function getAllHistory()
     {
         return $this->repo->getAll();
     }
@@ -150,5 +149,35 @@ class SwapService
             'pairs' => $data->pluck('pair'),
             'totals' => $data->pluck('total_swap'),
         ];
+    }
+
+    // get swap
+    public function findByID($id)
+    {
+        return $this->repo->find($id);
+    }
+
+    public function calculateAndUpdate($data)
+    {
+        // Xác định swap rate dựa trên loại position
+        $swapRate = $data['position_type'] === 'Long'
+            ? $data['swap_long']
+            : $data['swap_short'];
+
+        // Tính toán lại tổng swap
+        $totalSwap = $data['lot_size'] * $swapRate * $data['holding_days'];
+
+        // Chuẩn bị dữ liệu để cập nhật
+        $updateData = [
+            'pair'       => $data['pair'],
+            'lot_size'   => $data['lot_size'],
+            'type'       => $data['position_type'],
+            'swap_rate'  => $swapRate,
+            'days'       => $data['holding_days'],
+            'total_swap' => $totalSwap,
+        ];
+
+        // Gọi repository để update
+        return $this->repo->updateById($data['id'], $updateData);
     }
 }

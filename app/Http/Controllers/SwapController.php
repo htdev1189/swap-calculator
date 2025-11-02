@@ -142,7 +142,7 @@ class SwapController extends Controller
         $filteredRecords = $query->count();
 
         // Sorting
-        
+
         $orderColumnIndex = intval($request->get('order')[0]['column'] ?? 0);
         $orderDir = $request->get('order')[0]['dir'] ?? 'desc';
         $orderColumn = $columns[$orderColumnIndex] ?? 'id';
@@ -164,8 +164,9 @@ class SwapController extends Controller
                 $row->days,
                 $row->total_swap,
                 $row->created_at ?? '',
-                // Delete button with CSRF protection
-                '<form action="' . route('admin.swap.destroy', $row->id) . '" method="POST" style="display:inline;" onsubmit="return confirm(\'Confirm delete?\')">' .
+                '<a class="btn btn-sm btn-primary mr-1" href="' . route('admin.swap.edit', $row->id) . '">Edit</a>' .
+                    // Delete button with CSRF protection
+                    '<form action="' . route('admin.swap.destroy', $row->id) . '" method="POST" style="display:inline;" onsubmit="return confirm(\'Confirm delete?\')">' .
                     csrf_field() .
                     method_field('DELETE') .
                     '<button type="submit" class="btn btn-sm btn-danger">Delete</button></form>'
@@ -204,5 +205,68 @@ class SwapController extends Controller
             'chart' => $chart,
             'pageTitle' => 'Swap Statistics'
         ]);
+    }
+
+    /**
+     * edit form
+     */
+    public function edit($id)
+    {
+        $swap = $this->service->findByID($id);
+        return view('backend.swap.edit', [
+            'pageTitle' => 'edit swap',
+            'swap' => $swap
+        ]);
+    }
+
+    // update
+    public function update(Request $request)
+    {
+        // validate
+        $validated = $request->validate(
+            [
+                'id' => ['required', 'integer', 'exists:swap_calculations,id'],
+                'pair' => ['required', 'string'],
+                'lot_size' => ['required', 'numeric', 'gt:0'],
+                // 'swap_long' => ['required', 'numeric'],
+                // 'swap_short' => ['required', 'numeric'],
+                // cập nhật validate
+                'swap_long' => ['required_if:position_type,Long', 'nullable', 'numeric'],
+                'swap_short' => ['required_if:position_type,Short', 'nullable', 'numeric'],
+                'holding_days' => ['required', 'integer', 'gt:0'],
+                'position_type' => ['required', 'in:Long,Short'],
+            ],
+            [
+                'pair.required' => 'Vui lòng chọn cặp tiền tệ.',
+                'lot_size.required' => 'Vui lòng nhập Lot Size.',
+                'lot_size.numeric' => 'Lot Size phải là số hợp lệ.',
+                'lot_size.gt' => 'Lot Size phải lớn hơn 0.',
+                'swap_long.required' => 'Vui lòng nhập Swap Long.',
+                'swap_long.numeric' => 'Swap Long phải là số hợp lệ.',
+                'swap_short.required' => 'Vui lòng nhập Swap Short.',
+                'swap_short.numeric' => 'Swap Short phải là số hợp lệ.',
+                'holding_days.required' => 'Vui lòng nhập số ngày nắm giữ.',
+                'holding_days.integer' => 'Days phải là số nguyên hợp lệ.',
+                'holding_days.gt' => 'Days phải lớn hơn 0.',
+                'position_type.required' => 'Vui lòng chọn loại vị thế.',
+                'position_type.in' => 'Loại vị thế chỉ được phép là Long hoặc Short.',
+                'swap_long.required_if' => 'Swap Long bắt buộc khi chọn loại Long.',
+                'swap_short.required_if' => 'Swap Short bắt buộc khi chọn loại Short.',
+            ]
+        );
+
+
+        // Gọi Service xử lý business logic
+        $result = $this->service->calculateAndUpdate($validated);
+
+        if ($result) {
+            return redirect()
+                ->route('admin.swap.history.datatable')
+                ->with('success', 'Cập nhật swap thành công!');
+        }
+
+        return redirect()
+            ->back()
+            ->with('error', 'Không thể cập nhật swap. Vui lòng thử lại.');
     }
 }

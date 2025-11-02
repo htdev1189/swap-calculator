@@ -24,6 +24,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [SwapController::class, 'index'])->name('home');
     Route::get('/swap', [SwapController::class, 'swap'])->name('swap');
     Route::delete('/swap/delete/{id}', [SwapController::class, 'destroy'])->name('swap.destroy');
+    Route::get('/swap/edit/{id}', [SwapController::class, 'edit'])->name('swap.edit');
+    Route::post('/swap/update', [SwapController::class, 'update'])->name('swap.update');
     Route::post('/calculate', [SwapController::class, 'calculate'])->name('swap.calculate');
 
     Route::get('/history', [SwapController::class, 'history'])->name('swap.history.datatable');

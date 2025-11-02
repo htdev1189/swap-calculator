@@ -53,7 +53,9 @@ class SwapRepository
      */
     public function find($id)
     {
-        return $this->model->find($id);
+        //Laravel sẽ tự throw ModelNotFoundException, và Laravel tự render trang 404.blade.php.
+        return $this->model->findOrFail($id);
+        // return $this->model->find($id);
     }
 
     /**
@@ -97,5 +99,16 @@ class SwapRepository
             ->groupBy('pair')
             ->orderBy('pair')
             ->get();
+    }
+
+    public function updateById(int $id, array $data): bool
+    {
+        $swap = $this->model->find($id);
+
+        if (!$swap) {
+            return false;
+        }
+
+        return $swap->update($data);
     }
 }
