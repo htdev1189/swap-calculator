@@ -21,11 +21,11 @@ class UserSeeder extends Seeder
         // ]);
         User::create([
             'name' => 'Editor',
-            'email' => "editorr@gmail.com",
+            'email' => "editor@gmail.com",
             'password' => Hash::make("123456") 
         ]);
 
-        $user = User::where('email', 'editorr@gmail.com')->firstOrFail();
+        $user = User::where('email', 'editor@gmail.com')->firstOrFail();
         if ($user) {
             # code...
             $user->assignRole('editor');

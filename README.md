@@ -80,14 +80,17 @@ routes/
 ```bash
 git clone https://github.com/htdev1189/swap-calculator.git
 cd swap-calculator
+
+# cài đặt các gói cần thiết
+composer install
 ```
 2️⃣ Cài đặt phụ thuộc
 ```bash
 cp .env.example .env
 ```
-3️⃣ Tạo file môi trường
+3️⃣ Tạo key
 ```bash
-cp .env.example .env
+php artisan key:generate
 ```
 Cập nhật thông tin database trong file .env:
 ```ini
@@ -245,7 +248,17 @@ Cấu trúc bảng swap_pairs:
 | updated_at | datetime     | Thời gian cập nhật   |
 ---
 
+## 🎁 Cập nhật tính năng login vào hệ thống 
+### 1️⃣ Chạy Seeder
+```bash
+php artisan db:seed --class=UserSeeder
+php artisan db:seed --class=RolePermissionSeeder
+```
+
+
+
 ## 👨‍💻 Người thực hiện
+
 
 Hoàng Anh Tuấn 📧 [htuan1189@gmail.com](mailto:htuan1189@gmail.com)
 

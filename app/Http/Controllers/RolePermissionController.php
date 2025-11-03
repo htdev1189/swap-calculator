@@ -97,4 +97,16 @@ class RolePermissionController extends Controller
 
         return redirect()->back()->with('success', 'Đã xóa permission khỏi role thành công!');
     }
+
+    // remove per from roles
+    public function removePermission(Role $role, Permission $permission)
+    {
+        // Gỡ permission khỏi role
+        $role->revokePermissionTo($permission);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Đã xóa quyền '{$permission->name}' khỏi role '{$role->name}'"
+        ]);
+    }
 }
